@@ -35,11 +35,11 @@ public class Main {
             return value * unit.getFactor();
         }
 
-        public Length add(Length other, LengthUnit resultUnit) {
-            if (other == null || resultUnit == null) throw new IllegalArgumentException();
+        public Length add(Length other, LengthUnit targetUnit) {
+            if (other == null || targetUnit == null) throw new IllegalArgumentException();
             double sum = this.toBaseUnit() + other.toBaseUnit();
-            double result = sum / resultUnit.getFactor();
-            return new Length(result, resultUnit);
+            double result = sum / targetUnit.getFactor();
+            return new Length(result, targetUnit);
         }
 
         @Override
@@ -52,11 +52,20 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
-        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
-        Length result = l1.add(l2, Length.LengthUnit.FEET);
+    public static void demonstrateAddition(double v1, Length.LengthUnit u1,
+                                           double v2, Length.LengthUnit u2,
+                                           Length.LengthUnit targetUnit) {
+        Length l1 = new Length(v1, u1);
+        Length l2 = new Length(v2, u2);
+        Length result = l1.add(l2, targetUnit);
 
-        System.out.println("Result: " + result.getValue() + " FEET");
+        System.out.println("Input: Quantity(" + v1 + ", " + u1 + ") + Quantity(" + v2 + ", " + u2 + ")");
+        System.out.println("Output: " + result.getValue() + " " + targetUnit);
+    }
+
+    public static void main(String[] args) {
+        demonstrateAddition(1.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCHES, Length.LengthUnit.FEET);
+        demonstrateAddition(1.0, Length.LengthUnit.YARDS, 3.0, Length.LengthUnit.FEET, Length.LengthUnit.YARDS);
+        demonstrateAddition(30.48, Length.LengthUnit.CENTIMETERS, 1.0, Length.LengthUnit.FEET, Length.LengthUnit.FEET);
     }
 }
