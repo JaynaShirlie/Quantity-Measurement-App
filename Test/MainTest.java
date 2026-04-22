@@ -4,68 +4,70 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainTest {
 
     @Test
-    void testFeetEquality_SameValue() {
-        Main.Feet f1 = new Main.Feet(1.0);
-        Main.Feet f2 = new Main.Feet(1.0);
-        assertTrue(f1.equals(f2));
+    void testEquality_FeetToFeet_SameValue() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        Main.Length l2 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        assertTrue(l1.equals(l2));
     }
 
     @Test
-    void testFeetEquality_DifferentValue() {
-        Main.Feet f1 = new Main.Feet(1.0);
-        Main.Feet f2 = new Main.Feet(2.0);
-        assertFalse(f1.equals(f2));
+    void testEquality_InchToInch_SameValue() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.INCHES);
+        Main.Length l2 = new Main.Length(1.0, Main.Length.LengthUnit.INCHES);
+        assertTrue(l1.equals(l2));
     }
 
     @Test
-    void testFeetEquality_NullComparison() {
-        Main.Feet f1 = new Main.Feet(1.0);
-        assertFalse(f1.equals(null));
+    void testEquality_FeetToInch_EquivalentValue() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        Main.Length l2 = new Main.Length(12.0, Main.Length.LengthUnit.INCHES);
+        assertTrue(l1.equals(l2));
     }
 
     @Test
-    void testFeetEquality_DifferentClass() {
-        Main.Feet f1 = new Main.Feet(1.0);
+    void testEquality_InchToFeet_EquivalentValue() {
+        Main.Length l1 = new Main.Length(12.0, Main.Length.LengthUnit.INCHES);
+        Main.Length l2 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        assertTrue(l1.equals(l2));
+    }
+
+    @Test
+    void testEquality_FeetToFeet_DifferentValue() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        Main.Length l2 = new Main.Length(2.0, Main.Length.LengthUnit.FEET);
+        assertFalse(l1.equals(l2));
+    }
+
+    @Test
+    void testEquality_InchToInch_DifferentValue() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.INCHES);
+        Main.Length l2 = new Main.Length(2.0, Main.Length.LengthUnit.INCHES);
+        assertFalse(l1.equals(l2));
+    }
+
+    @Test
+    void testEquality_SameReference() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        assertTrue(l1.equals(l1));
+    }
+
+    @Test
+    void testEquality_NullComparison() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
+        assertFalse(l1.equals(null));
+    }
+
+    @Test
+    void testEquality_DifferentClass() {
+        Main.Length l1 = new Main.Length(1.0, Main.Length.LengthUnit.FEET);
         String str = "invalid";
-        assertFalse(f1.equals(str));
+        assertFalse(l1.equals(str));
     }
 
     @Test
-    void testFeetEquality_SameReference() {
-        Main.Feet f1 = new Main.Feet(1.0);
-        assertTrue(f1.equals(f1));
-    }
-
-    @Test
-    void testInchesEquality_SameValue() {
-        Main.Inches i1 = new Main.Inches(1.0);
-        Main.Inches i2 = new Main.Inches(1.0);
-        assertTrue(i1.equals(i2));
-    }
-
-    @Test
-    void testInchesEquality_DifferentValue() {
-        Main.Inches i1 = new Main.Inches(1.0);
-        Main.Inches i2 = new Main.Inches(2.0);
-        assertFalse(i1.equals(i2));
-    }
-
-    @Test
-    void testInchesEquality_NullComparison() {
-        Main.Inches i1 = new Main.Inches(1.0);
-        assertFalse(i1.equals(null));
-    }
-
-    @Test
-    void testInchesEquality_DifferentClass() {
-        Main.Inches i1 = new Main.Inches(1.0);
-        Integer num = 5;
-        assertFalse(i1.equals(num));
-    }
-
-    @Test
-    void testInchesEquality_SameReference() {
-        Main.Inches i1 = new Main.Inches(1.0);
-        assertTrue(i1.equals(i1));
+    void testEquality_InvalidUnit() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Main.Length(1.0, null);
+        });
     }
 }
