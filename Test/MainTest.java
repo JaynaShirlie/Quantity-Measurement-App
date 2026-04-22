@@ -4,98 +4,88 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainTest {
 
     @Test
-    void testAddition_FeetAndInches_ResultFeet() {
-        Main.Length l1 = new Main.Length(1.0, Main.LengthUnit.FEET);
-        Main.Length l2 = new Main.Length(12.0, Main.LengthUnit.INCHES);
-        Main.Length result = l1.add(l2, Main.LengthUnit.FEET);
-        assertEquals(2.0, result.getValue());
+    void testEquality_KgToKg_SameValue() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        Main.Weight w2 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        assertTrue(w1.equals(w2));
     }
 
     @Test
-    void testAddition_YardAndFeet_ResultYard() {
-        Main.Length l1 = new Main.Length(1.0, Main.LengthUnit.YARDS);
-        Main.Length l2 = new Main.Length(3.0, Main.LengthUnit.FEET);
-        Main.Length result = l1.add(l2, Main.LengthUnit.YARDS);
-        assertEquals(2.0, result.getValue());
+    void testEquality_KgToGram_Equivalent() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        Main.Weight w2 = new Main.Weight(1000.0, Main.Unit.GRAM);
+        assertTrue(w1.equals(w2));
     }
 
     @Test
-    void testAddition_YardAndInches_ResultInches() {
-        Main.Length l1 = new Main.Length(1.0, Main.LengthUnit.YARDS);
-        Main.Length l2 = new Main.Length(12.0, Main.LengthUnit.INCHES);
-        Main.Length result = l1.add(l2, Main.LengthUnit.INCHES);
-        assertEquals(48.0, result.getValue());
+    void testEquality_GramToKg_Equivalent() {
+        Main.Weight w1 = new Main.Weight(1000.0, Main.Unit.GRAM);
+        Main.Weight w2 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        assertTrue(w1.equals(w2));
     }
 
     @Test
-    void testAddition_CmAndFeet_ResultFeet() {
-        Main.Length l1 = new Main.Length(30.48, Main.LengthUnit.CENTIMETERS);
-        Main.Length l2 = new Main.Length(1.0, Main.LengthUnit.FEET);
-        Main.Length result = l1.add(l2, Main.LengthUnit.FEET);
-        assertEquals(2.0, result.getValue(), 0.0001);
+    void testEquality_KgToPound_Equivalent() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        Main.Weight w2 = new Main.Weight(2.20462, Main.Unit.POUND);
+        assertTrue(w1.equals(w2));
+    }
+
+    @Test
+    void testEquality_DifferentValue() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        Main.Weight w2 = new Main.Weight(2.0, Main.Unit.KILOGRAM);
+        assertFalse(w1.equals(w2));
+    }
+
+    @Test
+    void testAddition_KgAndGram() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        Main.Weight w2 = new Main.Weight(500.0, Main.Unit.GRAM);
+        Main.Weight result = w1.add(w2, Main.Unit.KILOGRAM);
+        assertEquals(1.5, result.getValue(), 0.0001);
+    }
+
+    @Test
+    void testAddition_PoundAndKg() {
+        Main.Weight w1 = new Main.Weight(2.20462, Main.Unit.POUND);
+        Main.Weight w2 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        Main.Weight result = w1.add(w2, Main.Unit.KILOGRAM);
+        assertEquals(2.0, result.getValue(), 0.01);
     }
 
     @Test
     void testAddition_SameUnit() {
-        Main.Length l1 = new Main.Length(2.0, Main.LengthUnit.FEET);
-        Main.Length l2 = new Main.Length(3.0, Main.LengthUnit.FEET);
-        Main.Length result = l1.add(l2, Main.LengthUnit.FEET);
+        Main.Weight w1 = new Main.Weight(2.0, Main.Unit.GRAM);
+        Main.Weight w2 = new Main.Weight(3.0, Main.Unit.GRAM);
+        Main.Weight result = w1.add(w2, Main.Unit.GRAM);
         assertEquals(5.0, result.getValue());
     }
 
     @Test
-    void testAddition_SameReference() {
-        Main.Length l1 = new Main.Length(2.0, Main.LengthUnit.FEET);
-        Main.Length result = l1.add(l1, Main.LengthUnit.FEET);
-        assertEquals(4.0, result.getValue());
+    void testNullComparison() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        assertFalse(w1.equals(null));
     }
 
     @Test
-    void testAddition_NullOther() {
-        Main.Length l1 = new Main.Length(1.0, Main.LengthUnit.FEET);
+    void testSameReference() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+        assertTrue(w1.equals(w1));
+    }
+
+    @Test
+    void testInvalidUnit() {
         assertThrows(IllegalArgumentException.class, () -> {
-            l1.add(null, Main.LengthUnit.FEET);
+            new Main.Weight(1.0, null);
         });
     }
 
     @Test
-    void testAddition_NullTargetUnit() {
-        Main.Length l1 = new Main.Length(1.0, Main.LengthUnit.FEET);
-        Main.Length l2 = new Main.Length(1.0, Main.LengthUnit.FEET);
+    void testAddition_Null() {
+        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
         assertThrows(IllegalArgumentException.class, () -> {
-            l1.add(l2, null);
+            w1.add(null, Main.Unit.KILOGRAM);
         });
-    }
-
-    @Test
-    void testAddition_ZeroValue() {
-        Main.Length l1 = new Main.Length(0.0, Main.LengthUnit.FEET);
-        Main.Length l2 = new Main.Length(2.0, Main.LengthUnit.FEET);
-        Main.Length result = l1.add(l2, Main.LengthUnit.FEET);
-        assertEquals(2.0, result.getValue());
-    }
-
-    @Test
-    void testAddition_NegativeValues() {
-        Main.Length l1 = new Main.Length(-1.0, Main.LengthUnit.FEET);
-        Main.Length l2 = new Main.Length(2.0, Main.LengthUnit.FEET);
-        Main.Length result = l1.add(l2, Main.LengthUnit.FEET);
-        assertEquals(1.0, result.getValue());
-    }
-
-    @Test
-    void testAddition_MultipleUnits() {
-        Main.Length a = new Main.Length(1.0, Main.LengthUnit.YARDS);
-        Main.Length b = new Main.Length(3.0, Main.LengthUnit.FEET);
-        Main.Length result = a.add(b, Main.LengthUnit.FEET);
-        assertEquals(6.0, result.getValue());
-    }
-
-    @Test
-    void testAddition_CmAndInches_ResultInches() {
-        Main.Length l1 = new Main.Length(2.0, Main.LengthUnit.CENTIMETERS);
-        Main.Length l2 = new Main.Length(0.393701, Main.LengthUnit.INCHES);
-        Main.Length result = l1.add(l2, Main.LengthUnit.INCHES);
-        assertTrue(result.getValue() > 0);
     }
 }

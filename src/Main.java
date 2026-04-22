@@ -1,32 +1,28 @@
 public class Main {
 
-    public enum LengthUnit {
-        FEET {
-            public double toInches(double value) { return value * 12.0; }
-            public double fromInches(double inches) { return inches / 12.0; }
+    public enum Unit {
+        KILOGRAM {
+            public double toBase(double value) { return value * 1000.0; }
+            public double fromBase(double base) { return base / 1000.0; }
         },
-        INCHES {
-            public double toInches(double value) { return value; }
-            public double fromInches(double inches) { return inches; }
+        GRAM {
+            public double toBase(double value) { return value; }
+            public double fromBase(double base) { return base; }
         },
-        YARDS {
-            public double toInches(double value) { return value * 36.0; }
-            public double fromInches(double inches) { return inches / 36.0; }
-        },
-        CENTIMETERS {
-            public double toInches(double value) { return value * 0.393701; }
-            public double fromInches(double inches) { return inches / 0.393701; }
+        POUND {
+            public double toBase(double value) { return value * 453.592; }
+            public double fromBase(double base) { return base / 453.592; }
         };
 
-        public abstract double toInches(double value);
-        public abstract double fromInches(double inches);
+        public abstract double toBase(double value);
+        public abstract double fromBase(double base);
     }
 
-    public static class Length {
+    public static class Weight {
         private final double value;
-        private final LengthUnit unit;
+        private final Unit unit;
 
-        public Length(double value, LengthUnit unit) {
+        public Weight(double value, Unit unit) {
             if (unit == null) throw new IllegalArgumentException();
             this.value = value;
             this.unit = unit;
@@ -36,31 +32,36 @@ public class Main {
             return value;
         }
 
-        private double toBaseUnit() {
-            return unit.toInches(value);
+        private double toBase() {
+            return unit.toBase(value);
         }
 
-        public Length add(Length other, LengthUnit targetUnit) {
+        public Weight add(Weight other, Unit targetUnit) {
             if (other == null || targetUnit == null) throw new IllegalArgumentException();
-            double sumInInches = this.toBaseUnit() + other.toBaseUnit();
-            double result = targetUnit.fromInches(sumInInches);
-            return new Length(result, targetUnit);
+            double sum = this.toBase() + other.toBase();
+            double result = targetUnit.fromBase(sum);
+            return new Weight(result, targetUnit);
         }
 
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null) return false;
-            if (!(obj instanceof Length)) return false;
-            Length other = (Length) obj;
-            return Double.compare(this.toBaseUnit(), other.toBaseUnit()) == 0;
+            if (!(obj instanceof Weight)) return false;
+
+            Weight other = (Weight) obj;
+
+            double diff = Math.abs(this.toBase() - other.toBase());
+            return diff < 0.01;
         }
     }
 
     public static void main(String[] args) {
-        Length l1 = new Length(1.0, LengthUnit.FEET);
-        Length l2 = new Length(12.0, LengthUnit.INCHES);
-        Length result = l1.add(l2, LengthUnit.FEET);
-        System.out.println("Result: " + result.getValue() + " FEET");
+        Weight w1 = new Weight(1.0, Unit.KILOGRAM);
+        Weight w2 = new Weight(1000.0, Unit.GRAM);
+        System.out.println("Equal: " + w1.equals(w2));
+
+        Weight result = w1.add(w2, Unit.KILOGRAM);
+        System.out.println("Sum: " + result.getValue() + " KILOGRAM");
     }
 }
