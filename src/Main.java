@@ -1,25 +1,30 @@
 public class Main {
 
+    public enum LengthUnit {
+        FEET {
+            public double toInches(double value) { return value * 12.0; }
+            public double fromInches(double inches) { return inches / 12.0; }
+        },
+        INCHES {
+            public double toInches(double value) { return value; }
+            public double fromInches(double inches) { return inches; }
+        },
+        YARDS {
+            public double toInches(double value) { return value * 36.0; }
+            public double fromInches(double inches) { return inches / 36.0; }
+        },
+        CENTIMETERS {
+            public double toInches(double value) { return value * 0.393701; }
+            public double fromInches(double inches) { return inches / 0.393701; }
+        };
+
+        public abstract double toInches(double value);
+        public abstract double fromInches(double inches);
+    }
+
     public static class Length {
         private final double value;
         private final LengthUnit unit;
-
-        public enum LengthUnit {
-            FEET(12.0),
-            INCHES(1.0),
-            YARDS(36.0),
-            CENTIMETERS(0.393701);
-
-            private final double factor;
-
-            LengthUnit(double factor) {
-                this.factor = factor;
-            }
-
-            public double getFactor() {
-                return factor;
-            }
-        }
 
         public Length(double value, LengthUnit unit) {
             if (unit == null) throw new IllegalArgumentException();
@@ -32,13 +37,13 @@ public class Main {
         }
 
         private double toBaseUnit() {
-            return value * unit.getFactor();
+            return unit.toInches(value);
         }
 
         public Length add(Length other, LengthUnit targetUnit) {
             if (other == null || targetUnit == null) throw new IllegalArgumentException();
-            double sum = this.toBaseUnit() + other.toBaseUnit();
-            double result = sum / targetUnit.getFactor();
+            double sumInInches = this.toBaseUnit() + other.toBaseUnit();
+            double result = targetUnit.fromInches(sumInInches);
             return new Length(result, targetUnit);
         }
 
@@ -52,20 +57,10 @@ public class Main {
         }
     }
 
-    public static void demonstrateAddition(double v1, Length.LengthUnit u1,
-                                           double v2, Length.LengthUnit u2,
-                                           Length.LengthUnit targetUnit) {
-        Length l1 = new Length(v1, u1);
-        Length l2 = new Length(v2, u2);
-        Length result = l1.add(l2, targetUnit);
-
-        System.out.println("Input: Quantity(" + v1 + ", " + u1 + ") + Quantity(" + v2 + ", " + u2 + ")");
-        System.out.println("Output: " + result.getValue() + " " + targetUnit);
-    }
-
     public static void main(String[] args) {
-        demonstrateAddition(1.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCHES, Length.LengthUnit.FEET);
-        demonstrateAddition(1.0, Length.LengthUnit.YARDS, 3.0, Length.LengthUnit.FEET, Length.LengthUnit.YARDS);
-        demonstrateAddition(30.48, Length.LengthUnit.CENTIMETERS, 1.0, Length.LengthUnit.FEET, Length.LengthUnit.FEET);
+        Length l1 = new Length(1.0, LengthUnit.FEET);
+        Length l2 = new Length(12.0, LengthUnit.INCHES);
+        Length result = l1.add(l2, LengthUnit.FEET);
+        System.out.println("Result: " + result.getValue() + " FEET");
     }
 }
