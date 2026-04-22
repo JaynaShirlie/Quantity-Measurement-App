@@ -10,14 +10,14 @@ public class Main {
             YARDS(36.0),
             CENTIMETERS(0.393701);
 
-            private final double conversionFactor;
+            private final double factor;
 
-            LengthUnit(double conversionFactor) {
-                this.conversionFactor = conversionFactor;
+            LengthUnit(double factor) {
+                this.factor = factor;
             }
 
-            public double getConversionFactor() {
-                return conversionFactor;
+            public double getFactor() {
+                return factor;
             }
         }
 
@@ -28,38 +28,36 @@ public class Main {
         }
 
         private double toBaseUnit() {
-            return this.value * this.unit.getConversionFactor();
+            return value * unit.getFactor(); // convert to inches
         }
 
-        private boolean compare(Length other) {
-            return Double.compare(this.toBaseUnit(), other.toBaseUnit()) == 0;
+        public double convertTo(LengthUnit targetUnit) {
+            if (targetUnit == null) throw new IllegalArgumentException();
+
+            double baseValue = this.toBaseUnit(); // in inches
+            return baseValue / targetUnit.getFactor();
         }
 
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
-            if (obj == null) return false;
-            if (!(obj instanceof Length)) return false;
+            if (obj == null || !(obj instanceof Length)) return false;
             Length other = (Length) obj;
-            return compare(other);
+            return Double.compare(this.toBaseUnit(), other.toBaseUnit()) == 0;
         }
     }
 
-    public static boolean demonstrateLengthComparison(double v1, Length.LengthUnit u1,
-                                                      double v2, Length.LengthUnit u2) {
-        Length l1 = new Length(v1, u1);
-        Length l2 = new Length(v2, u2);
-        boolean result = l1.equals(l2);
-        System.out.println("Input: Quantity(" + v1 + ", " + u1 + ") and Quantity(" + v2 + ", " + u2 + ")");
-        System.out.println("Output: Equal (" + result + ")");
-        return result;
+    public static void demonstrateConversion(double value, Length.LengthUnit from, Length.LengthUnit to) {
+        Length length = new Length(value, from);
+        double result = length.convertTo(to);
+
+        System.out.println("Input: " + value + " " + from);
+        System.out.println("Converted to " + to + ": " + result);
     }
 
     public static void main(String[] args) {
-        demonstrateLengthComparison(1.0, Length.LengthUnit.YARDS, 3.0, Length.LengthUnit.FEET);
-        demonstrateLengthComparison(1.0, Length.LengthUnit.YARDS, 36.0, Length.LengthUnit.INCHES);
-        demonstrateLengthComparison(2.0, Length.LengthUnit.YARDS, 2.0, Length.LengthUnit.YARDS);
-        demonstrateLengthComparison(2.0, Length.LengthUnit.CENTIMETERS, 2.0, Length.LengthUnit.CENTIMETERS);
-        demonstrateLengthComparison(1.0, Length.LengthUnit.CENTIMETERS, 0.393701, Length.LengthUnit.INCHES);
+        demonstrateConversion(1.0, Length.LengthUnit.FEET, Length.LengthUnit.INCHES);
+        demonstrateConversion(1.0, Length.LengthUnit.YARDS, Length.LengthUnit.FEET);
+        demonstrateConversion(1.0, Length.LengthUnit.CENTIMETERS, Length.LengthUnit.INCHES);
     }
 }
