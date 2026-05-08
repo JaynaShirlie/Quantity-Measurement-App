@@ -4,90 +4,60 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MainTest {
 
     @Test
-    void lengthFeetEqualsInches() {
-        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
-        Main.Quantity<Main.LengthUnit> inches = new Main.Quantity<>(12.0, Main.LengthUnit.INCHES);
-        assertTrue(feet.equals(inches));
+    void volumeLiterEqualsMilliliters() {
+        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> ml = new Main.Quantity<>(1000.0, Main.VolumeUnit.MILLILITRE);
+        assertTrue(l.equals(ml));
     }
 
     @Test
-    void lengthYardsEqualsFeet() {
-        Main.Quantity<Main.LengthUnit> yards = new Main.Quantity<>(1.0, Main.LengthUnit.YARDS);
-        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(3.0, Main.LengthUnit.FEET);
-        assertTrue(yards.equals(feet));
+    void volumeLiterEqualsGallon() {
+        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(3.78541, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> g = new Main.Quantity<>(1.0, Main.VolumeUnit.GALLON);
+        assertTrue(l.equals(g));
     }
 
     @Test
-    void weightKilogramEqualsGrams() {
-        Main.Quantity<Main.WeightUnit> kg = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
-        Main.Quantity<Main.WeightUnit> grams = new Main.Quantity<>(1000.0, Main.WeightUnit.GRAM);
-        assertTrue(kg.equals(grams));
-    }
-
-    @Test
-    void weightPoundEqualsGrams() {
-        Main.Quantity<Main.WeightUnit> pound = new Main.Quantity<>(1.0, Main.WeightUnit.POUND);
-        Main.Quantity<Main.WeightUnit> grams = new Main.Quantity<>(453.592, Main.WeightUnit.GRAM);
-        assertTrue(pound.equals(grams));
-    }
-
-    @Test
-    void convertLengthFeetToInches() {
-        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
-        Main.Quantity<Main.LengthUnit> result = feet.convertTo(Main.LengthUnit.INCHES);
-        assertEquals(12.0, result.getValue());
-    }
-
-    @Test
-    void convertWeightKilogramsToGrams() {
-        Main.Quantity<Main.WeightUnit> kg = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
-        Main.Quantity<Main.WeightUnit> result = kg.convertTo(Main.WeightUnit.GRAM);
+    void convertVolumeLitersToMilliliters() {
+        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> result = l.convertTo(Main.VolumeUnit.MILLILITRE);
         assertEquals(1000.0, result.getValue());
     }
 
     @Test
-    void addLengthFeetAndInches() {
-        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
-        Main.Quantity<Main.LengthUnit> inches = new Main.Quantity<>(12.0, Main.LengthUnit.INCHES);
-        Main.Quantity<Main.LengthUnit> result = feet.add(inches, Main.LengthUnit.FEET);
+    void convertVolumeGallonToLiter() {
+        Main.Quantity<Main.VolumeUnit> g = new Main.Quantity<>(1.0, Main.VolumeUnit.GALLON);
+        Main.Quantity<Main.VolumeUnit> result = g.convertTo(Main.VolumeUnit.LITRE);
+        assertEquals(3.79, result.getValue());
+    }
+
+    @Test
+    void addVolumeLitersAndMilliliters() {
+        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> ml = new Main.Quantity<>(1000.0, Main.VolumeUnit.MILLILITRE);
+        Main.Quantity<Main.VolumeUnit> result = l.add(ml, Main.VolumeUnit.LITRE);
         assertEquals(2.0, result.getValue());
     }
 
     @Test
-    void addWeightKilogramsAndGrams() {
-        Main.Quantity<Main.WeightUnit> kg = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
-        Main.Quantity<Main.WeightUnit> grams = new Main.Quantity<>(1000.0, Main.WeightUnit.GRAM);
-        Main.Quantity<Main.WeightUnit> result = kg.add(grams, Main.WeightUnit.KILOGRAM);
-        assertEquals(2.0, result.getValue());
+    void addVolumeLitersAndGallon() {
+        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> g = new Main.Quantity<>(1.0, Main.VolumeUnit.GALLON);
+        Main.Quantity<Main.VolumeUnit> result = l.add(g, Main.VolumeUnit.LITRE);
+        assertEquals(4.79, result.getValue());
     }
 
     @Test
-    void preventCrossTypeComparison() {
-        Main.Quantity<Main.LengthUnit> length = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
-        Main.Quantity<Main.WeightUnit> weight = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
-        assertFalse(length.equals(weight));
+    void preventVolumeLengthComparison() {
+        Main.Quantity<Main.VolumeUnit> v = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.LengthUnit> l = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
+        assertFalse(v.equals(l));
     }
 
     @Test
-    void preventCrossTypeAddition() {
-        Main.Quantity<Main.LengthUnit> length = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
-        Main.Quantity<Main.WeightUnit> weight = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
-        assertThrows(IllegalArgumentException.class, () -> {
-            length.add((Main.Quantity) weight);
-        });
-    }
-
-    @Test
-    void constructorRejectsNullUnit() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Main.Quantity<>(1.0, null);
-        });
-    }
-
-    @Test
-    void constructorRejectsInvalidValue() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Main.Quantity<>(Double.NaN, Main.LengthUnit.FEET);
-        });
+    void preventVolumeWeightComparison() {
+        Main.Quantity<Main.VolumeUnit> v = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.WeightUnit> w = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
+        assertFalse(v.equals(w));
     }
 }

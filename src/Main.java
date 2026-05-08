@@ -74,6 +74,38 @@ public class Main {
         }
     }
 
+    enum VolumeUnit implements IMeasurable {
+        LITRE(1.0),
+        MILLILITRE(0.001),
+        GALLON(3.78541);
+
+        private final double conversionFactor;
+
+        VolumeUnit(double conversionFactor) {
+            this.conversionFactor = conversionFactor;
+        }
+
+        public double getConversionFactor() {
+            return conversionFactor;
+        }
+
+        public double convertToBaseUnit(double value) {
+            return round(value * conversionFactor);
+        }
+
+        public double convertFromBaseUnit(double baseValue) {
+            return round(baseValue / conversionFactor);
+        }
+
+        public String getUnitName() {
+            return this.name();
+        }
+
+        private double round(double value) {
+            return Math.round(value * 100.0) / 100.0;
+        }
+    }
+
     static class Quantity<U extends IMeasurable> {
         private final double value;
         private final U unit;
@@ -159,18 +191,14 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Quantity<LengthUnit> feet = new Quantity<>(1.0, LengthUnit.FEET);
-        Quantity<LengthUnit> inches = new Quantity<>(12.0, LengthUnit.INCHES);
 
-        System.out.println(QuantityMeasurementApp.demonstrateEquality(feet, inches));
-        System.out.println(QuantityMeasurementApp.demonstrateConversion(feet, LengthUnit.INCHES));
-        System.out.println(QuantityMeasurementApp.demonstrateAddition(feet, inches, LengthUnit.FEET));
+        Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+        Quantity<VolumeUnit> v3 = new Quantity<>(1.0, VolumeUnit.GALLON);
 
-        Quantity<WeightUnit> kg = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-        Quantity<WeightUnit> gram = new Quantity<>(1000.0, WeightUnit.GRAM);
-
-        System.out.println(QuantityMeasurementApp.demonstrateEquality(kg, gram));
-        System.out.println(QuantityMeasurementApp.demonstrateConversion(kg, WeightUnit.GRAM));
-        System.out.println(QuantityMeasurementApp.demonstrateAddition(kg, gram, WeightUnit.KILOGRAM));
+        System.out.println(v1.equals(v2));
+        System.out.println(v1.convertTo(VolumeUnit.MILLILITRE));
+        System.out.println(v1.add(v2, VolumeUnit.LITRE));
+        System.out.println(v3.convertTo(VolumeUnit.LITRE));
     }
 }
