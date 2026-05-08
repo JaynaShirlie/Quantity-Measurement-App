@@ -4,60 +4,72 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MainTest {
 
     @Test
-    void volumeLiterEqualsMilliliters() {
-        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.VolumeUnit> ml = new Main.Quantity<>(1000.0, Main.VolumeUnit.MILLILITRE);
-        assertTrue(l.equals(ml));
+    void testSubtractionSameUnit() {
+        Main.Quantity<Main.LengthUnit> q1 = new Main.Quantity<>(10, Main.LengthUnit.FEET);
+        Main.Quantity<Main.LengthUnit> q2 = new Main.Quantity<>(5, Main.LengthUnit.FEET);
+        assertEquals(new Main.Quantity<>(5, Main.LengthUnit.FEET), q1.subtract(q2));
     }
 
     @Test
-    void volumeLiterEqualsGallon() {
-        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(3.78541, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.VolumeUnit> g = new Main.Quantity<>(1.0, Main.VolumeUnit.GALLON);
-        assertTrue(l.equals(g));
+    void testSubtractionCrossUnit() {
+        Main.Quantity<Main.LengthUnit> q1 = new Main.Quantity<>(10, Main.LengthUnit.FEET);
+        Main.Quantity<Main.LengthUnit> q2 = new Main.Quantity<>(6, Main.LengthUnit.INCHES);
+        assertEquals(new Main.Quantity<>(9.5, Main.LengthUnit.FEET), q1.subtract(q2));
     }
 
     @Test
-    void convertVolumeLitersToMilliliters() {
-        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.VolumeUnit> result = l.convertTo(Main.VolumeUnit.MILLILITRE);
-        assertEquals(1000.0, result.getValue());
+    void testSubtractionNegative() {
+        Main.Quantity<Main.WeightUnit> q1 = new Main.Quantity<>(2, Main.WeightUnit.KILOGRAM);
+        Main.Quantity<Main.WeightUnit> q2 = new Main.Quantity<>(5, Main.WeightUnit.KILOGRAM);
+        assertEquals(new Main.Quantity<>(-3, Main.WeightUnit.KILOGRAM), q1.subtract(q2));
     }
 
     @Test
-    void convertVolumeGallonToLiter() {
-        Main.Quantity<Main.VolumeUnit> g = new Main.Quantity<>(1.0, Main.VolumeUnit.GALLON);
-        Main.Quantity<Main.VolumeUnit> result = g.convertTo(Main.VolumeUnit.LITRE);
-        assertEquals(3.79, result.getValue());
+    void testSubtractionZero() {
+        Main.Quantity<Main.VolumeUnit> q1 = new Main.Quantity<>(1, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> q2 = new Main.Quantity<>(1000, Main.VolumeUnit.MILLILITRE);
+        assertEquals(new Main.Quantity<>(0, Main.VolumeUnit.LITRE), q1.subtract(q2));
     }
 
     @Test
-    void addVolumeLitersAndMilliliters() {
-        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.VolumeUnit> ml = new Main.Quantity<>(1000.0, Main.VolumeUnit.MILLILITRE);
-        Main.Quantity<Main.VolumeUnit> result = l.add(ml, Main.VolumeUnit.LITRE);
-        assertEquals(2.0, result.getValue());
+    void testDivisionSameUnit() {
+        Main.Quantity<Main.LengthUnit> q1 = new Main.Quantity<>(10, Main.LengthUnit.FEET);
+        Main.Quantity<Main.LengthUnit> q2 = new Main.Quantity<>(2, Main.LengthUnit.FEET);
+        assertEquals(5.0, q1.divide(q2));
     }
 
     @Test
-    void addVolumeLitersAndGallon() {
-        Main.Quantity<Main.VolumeUnit> l = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.VolumeUnit> g = new Main.Quantity<>(1.0, Main.VolumeUnit.GALLON);
-        Main.Quantity<Main.VolumeUnit> result = l.add(g, Main.VolumeUnit.LITRE);
-        assertEquals(4.79, result.getValue());
+    void testDivisionCrossUnit() {
+        Main.Quantity<Main.LengthUnit> q1 = new Main.Quantity<>(24, Main.LengthUnit.INCHES);
+        Main.Quantity<Main.LengthUnit> q2 = new Main.Quantity<>(2, Main.LengthUnit.FEET);
+        assertEquals(1.0, q1.divide(q2));
     }
 
     @Test
-    void preventVolumeLengthComparison() {
-        Main.Quantity<Main.VolumeUnit> v = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.LengthUnit> l = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
-        assertFalse(v.equals(l));
+    void testDivisionLessThanOne() {
+        Main.Quantity<Main.VolumeUnit> q1 = new Main.Quantity<>(5, Main.VolumeUnit.LITRE);
+        Main.Quantity<Main.VolumeUnit> q2 = new Main.Quantity<>(10, Main.VolumeUnit.LITRE);
+        assertEquals(0.5, q1.divide(q2));
     }
 
     @Test
-    void preventVolumeWeightComparison() {
-        Main.Quantity<Main.VolumeUnit> v = new Main.Quantity<>(1.0, Main.VolumeUnit.LITRE);
-        Main.Quantity<Main.WeightUnit> w = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
-        assertFalse(v.equals(w));
+    void testDivisionByZero() {
+        Main.Quantity<Main.WeightUnit> q1 = new Main.Quantity<>(10, Main.WeightUnit.KILOGRAM);
+        Main.Quantity<Main.WeightUnit> q2 = new Main.Quantity<>(0, Main.WeightUnit.KILOGRAM);
+        assertThrows(ArithmeticException.class, () -> q1.divide(q2));
+    }
+
+    @Test
+    void testCrossCategorySubtraction() {
+        Main.Quantity<Main.LengthUnit> q1 = new Main.Quantity<>(10, Main.LengthUnit.FEET);
+        Main.Quantity<Main.WeightUnit> q2 = new Main.Quantity<>(5, Main.WeightUnit.KILOGRAM);
+        assertThrows(IllegalArgumentException.class, () -> q1.subtract((Main.Quantity) q2));
+    }
+
+    @Test
+    void testCrossCategoryDivision() {
+        Main.Quantity<Main.LengthUnit> q1 = new Main.Quantity<>(10, Main.LengthUnit.FEET);
+        Main.Quantity<Main.WeightUnit> q2 = new Main.Quantity<>(5, Main.WeightUnit.KILOGRAM);
+        assertThrows(IllegalArgumentException.class, () -> q1.divide((Main.Quantity) q2));
     }
 }
