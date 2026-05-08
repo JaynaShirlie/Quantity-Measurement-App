@@ -1,91 +1,93 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MainTest {
+public class MainTest {
 
     @Test
-    void testEquality_KgToKg_SameValue() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        Main.Weight w2 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        assertTrue(w1.equals(w2));
+    void lengthFeetEqualsInches() {
+        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
+        Main.Quantity<Main.LengthUnit> inches = new Main.Quantity<>(12.0, Main.LengthUnit.INCHES);
+        assertTrue(feet.equals(inches));
     }
 
     @Test
-    void testEquality_KgToGram_Equivalent() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        Main.Weight w2 = new Main.Weight(1000.0, Main.Unit.GRAM);
-        assertTrue(w1.equals(w2));
+    void lengthYardsEqualsFeet() {
+        Main.Quantity<Main.LengthUnit> yards = new Main.Quantity<>(1.0, Main.LengthUnit.YARDS);
+        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(3.0, Main.LengthUnit.FEET);
+        assertTrue(yards.equals(feet));
     }
 
     @Test
-    void testEquality_GramToKg_Equivalent() {
-        Main.Weight w1 = new Main.Weight(1000.0, Main.Unit.GRAM);
-        Main.Weight w2 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        assertTrue(w1.equals(w2));
+    void weightKilogramEqualsGrams() {
+        Main.Quantity<Main.WeightUnit> kg = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
+        Main.Quantity<Main.WeightUnit> grams = new Main.Quantity<>(1000.0, Main.WeightUnit.GRAM);
+        assertTrue(kg.equals(grams));
     }
 
     @Test
-    void testEquality_KgToPound_Equivalent() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        Main.Weight w2 = new Main.Weight(2.20462, Main.Unit.POUND);
-        assertTrue(w1.equals(w2));
+    void weightPoundEqualsGrams() {
+        Main.Quantity<Main.WeightUnit> pound = new Main.Quantity<>(1.0, Main.WeightUnit.POUND);
+        Main.Quantity<Main.WeightUnit> grams = new Main.Quantity<>(453.592, Main.WeightUnit.GRAM);
+        assertTrue(pound.equals(grams));
     }
 
     @Test
-    void testEquality_DifferentValue() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        Main.Weight w2 = new Main.Weight(2.0, Main.Unit.KILOGRAM);
-        assertFalse(w1.equals(w2));
+    void convertLengthFeetToInches() {
+        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
+        Main.Quantity<Main.LengthUnit> result = feet.convertTo(Main.LengthUnit.INCHES);
+        assertEquals(12.0, result.getValue());
     }
 
     @Test
-    void testAddition_KgAndGram() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        Main.Weight w2 = new Main.Weight(500.0, Main.Unit.GRAM);
-        Main.Weight result = w1.add(w2, Main.Unit.KILOGRAM);
-        assertEquals(1.5, result.getValue(), 0.0001);
+    void convertWeightKilogramsToGrams() {
+        Main.Quantity<Main.WeightUnit> kg = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
+        Main.Quantity<Main.WeightUnit> result = kg.convertTo(Main.WeightUnit.GRAM);
+        assertEquals(1000.0, result.getValue());
     }
 
     @Test
-    void testAddition_PoundAndKg() {
-        Main.Weight w1 = new Main.Weight(2.20462, Main.Unit.POUND);
-        Main.Weight w2 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        Main.Weight result = w1.add(w2, Main.Unit.KILOGRAM);
-        assertEquals(2.0, result.getValue(), 0.01);
+    void addLengthFeetAndInches() {
+        Main.Quantity<Main.LengthUnit> feet = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
+        Main.Quantity<Main.LengthUnit> inches = new Main.Quantity<>(12.0, Main.LengthUnit.INCHES);
+        Main.Quantity<Main.LengthUnit> result = feet.add(inches, Main.LengthUnit.FEET);
+        assertEquals(2.0, result.getValue());
     }
 
     @Test
-    void testAddition_SameUnit() {
-        Main.Weight w1 = new Main.Weight(2.0, Main.Unit.GRAM);
-        Main.Weight w2 = new Main.Weight(3.0, Main.Unit.GRAM);
-        Main.Weight result = w1.add(w2, Main.Unit.GRAM);
-        assertEquals(5.0, result.getValue());
+    void addWeightKilogramsAndGrams() {
+        Main.Quantity<Main.WeightUnit> kg = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
+        Main.Quantity<Main.WeightUnit> grams = new Main.Quantity<>(1000.0, Main.WeightUnit.GRAM);
+        Main.Quantity<Main.WeightUnit> result = kg.add(grams, Main.WeightUnit.KILOGRAM);
+        assertEquals(2.0, result.getValue());
     }
 
     @Test
-    void testNullComparison() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        assertFalse(w1.equals(null));
+    void preventCrossTypeComparison() {
+        Main.Quantity<Main.LengthUnit> length = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
+        Main.Quantity<Main.WeightUnit> weight = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
+        assertFalse(length.equals(weight));
     }
 
     @Test
-    void testSameReference() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
-        assertTrue(w1.equals(w1));
-    }
-
-    @Test
-    void testInvalidUnit() {
+    void preventCrossTypeAddition() {
+        Main.Quantity<Main.LengthUnit> length = new Main.Quantity<>(1.0, Main.LengthUnit.FEET);
+        Main.Quantity<Main.WeightUnit> weight = new Main.Quantity<>(1.0, Main.WeightUnit.KILOGRAM);
         assertThrows(IllegalArgumentException.class, () -> {
-            new Main.Weight(1.0, null);
+            length.add((Main.Quantity) weight);
         });
     }
 
     @Test
-    void testAddition_Null() {
-        Main.Weight w1 = new Main.Weight(1.0, Main.Unit.KILOGRAM);
+    void constructorRejectsNullUnit() {
         assertThrows(IllegalArgumentException.class, () -> {
-            w1.add(null, Main.Unit.KILOGRAM);
+            new Main.Quantity<>(1.0, null);
+        });
+    }
+
+    @Test
+    void constructorRejectsInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Main.Quantity<>(Double.NaN, Main.LengthUnit.FEET);
         });
     }
 }
